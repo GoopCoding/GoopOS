@@ -36,62 +36,24 @@
       z-index: 9999;
     }
 
-    /* Startup Screen */
-    #startupScreen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #000;
-      flex-direction: column;
-      font-size: 1.5rem;
-      white-space: pre-wrap;
-      overflow: hidden;
-      color: #00ff6a;
-    }
-
-    #mainContent {
-      display: none;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Tab Bar */
-    #tabBar {
-      display: flex;
-      background-color: #1a1a3d;
-      padding: 10px;
-      overflow-x: auto;
-      border-bottom: 3px solid #00ff6a;
-      box-shadow: 0px 4px 10px rgba(0, 255, 106, 0.2);
-    }
-
-    .tab {
-      padding: 8px 15px;
-      margin-right: 10px;
+    /* Game List */
+    .game-card {
       background-color: #111;
-      color: #00ff6a;
-      border: 1px solid #00ff6a;
+      border: 2px solid #00ff6a;
       border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      transition: all 0.3s ease-in-out;
     }
 
-    .tab:hover {
-      background-color: #222;
+    .game-card:hover {
       transform: scale(1.05);
     }
 
-    .tab .close {
-      margin-left: 10px;
-      color: #ff4c4c;
-      cursor: pointer;
+    .game-card img {
+      width: 100%;
+      border-radius: 6px;
     }
 
     /* Iframe Container */
@@ -133,6 +95,16 @@
   </style>
 </head>
 <body>
+  <div class="container py-5">
+    <h1 class="text-center mb-4">🚀 APPS Hub</h1>
+    <div class="row g-4" id="gameList"></div>
+  </div>
+
+  <div id="iframeContainer">
+    <iframe src="" id="gameIframe"></iframe>
+    <button class="close-iframe" onclick="closeIframe()">Close</button>
+  </div>
+
   <script>
     const games = [
       {
@@ -142,6 +114,33 @@
         url: "https://edgedcircles.com/uv/service/hvtrs8%2F-wuw%2Ctkkvoi.aoo%2Fgxrlmrg/",
       }
     ];
+
+    function loadGames() {
+      const gameList = document.getElementById("gameList");
+      gameList.innerHTML = "";
+      games.forEach(game => {
+        const gameCard = document.createElement("div");
+        gameCard.classList.add("col-md-3", "game-card");
+        gameCard.innerHTML = `
+          <img src="${game.thumbnail}" alt="${game.title}">
+          <h5>${game.title}</h5>
+        `;
+        gameCard.onclick = () => openGame(game.url);
+        gameList.appendChild(gameCard);
+      });
+    }
+
+    function openGame(url) {
+      document.getElementById("iframeContainer").style.display = "block";
+      document.getElementById("gameIframe").src = url;
+    }
+
+    function closeIframe() {
+      document.getElementById("iframeContainer").style.display = "none";
+      document.getElementById("gameIframe").src = "";
+    }
+
+    window.onload = loadGames;
   </script>
 </body>
 </html>
