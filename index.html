@@ -19,49 +19,7 @@
     }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; }
-
-    /* ---------- Authentication Overlay (Login/Signup) ---------- */
-    #authOverlay {
-      position: fixed;
-      top: 0; left: 0;
-      right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 10000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .auth-form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 250px;
-    }
-    .auth-form.active {
-      display: flex;
-    }
-    .auth-form input {
-      margin: 5px 0;
-      padding: 8px;
-      width: 100%;
-    }
-    .auth-form button {
-      padding: 8px 16px;
-      margin: 10px 0;
-      cursor: pointer;
-    }
-    .auth-form p {
-      font-size: 12px;
-    }
-    .auth-form a {
-      color: blue;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
+    
     /* ---------- Loading Screen ---------- */
     #loadingScreen {
       position: fixed;
@@ -106,7 +64,7 @@
       from { width: 0%; }
       to { width: 100%; }
     }
-
+    
     /* ---------- Desktop Background ---------- */
     .desktop {
       position: relative;
@@ -115,7 +73,7 @@
       background: url('https://wallpaperaccess.com/full/317501.jpg') no-repeat center center fixed;
       background-size: cover;
     }
-
+    
     /* ---------- Desktop Icons ---------- */
     .desktop-icons {
       position: absolute;
@@ -149,7 +107,7 @@
       text-shadow: 0 0 3px #000;
       text-align: center;
     }
-
+    
     /* ---------- Taskbar ---------- */
     .taskbar {
       position: absolute;
@@ -206,7 +164,7 @@
     .system-icon:hover {
       transform: scale(1.1);
     }
-
+    
     /* ---------- Start Menu ---------- */
     .start-menu {
       position: absolute;
@@ -279,7 +237,7 @@
       text-align: center;
       color: #333;
     }
-
+    
     /* ---------- Quick Settings Panel ---------- */
     .quick-settings {
       position: absolute;
@@ -317,7 +275,7 @@
       padding: 6px 12px;
       cursor: pointer;
     }
-
+    
     /* ---------- Window (Simulated App Windows) ---------- */
     .window {
       position: absolute;
@@ -394,25 +352,6 @@
   </style>
 </head>
 <body>
-  <!-- ---------- Authentication Overlay ---------- -->
-  <div id="authOverlay">
-    <div id="loginForm" class="auth-form active">
-      <h2>Login</h2>
-      <input type="text" id="loginUsername" placeholder="Username" required>
-      <input type="password" id="loginPassword" placeholder="Password" required>
-      <button onclick="login()">Login</button>
-      <p>Don't have an account? <a onclick="switchToSignup()">Sign Up</a></p>
-    </div>
-    <div id="signupForm" class="auth-form">
-      <h2>Sign Up</h2>
-      <input type="text" id="signupUsername" placeholder="Username" required>
-      <input type="email" id="signupEmail" placeholder="Email" required>
-      <input type="password" id="signupPassword" placeholder="Password" required>
-      <button onclick="signup()">Sign Up</button>
-      <p>Already have an account? <a onclick="switchToLogin()">Login</a></p>
-    </div>
-  </div>
-
   <!-- ---------- Loading Screen ---------- -->
   <div id="loadingScreen">
     <div class="logo">
@@ -433,14 +372,14 @@
       <div class="progress-bar"></div>
     </div>
   </div>
-
+  
   <!-- ---------- Desktop Environment ---------- -->
   <div class="desktop">
-    <!-- Desktop Icons -->
+    <!-- Desktop Icons (Generated from JSON Data) -->
     <div class="desktop-icons" id="desktopIcons">
       <!-- Icons will be generated dynamically -->
     </div>
-
+    
     <!-- Start Menu -->
     <div class="start-menu" id="startMenu">
       <div class="start-header">
@@ -448,32 +387,13 @@
       </div>
       <div class="user-info">
         <img src="https://img.icons8.com/fluency/48/000000/user.png" alt="User" id="userPfp">
-        <div class="name" id="userName">User Name</div>
+        <div class="name" id="userName">Guest</div>
       </div>
       <div class="apps-grid" id="appsGrid">
-        <div class="app-tile" onclick="openWindow('Apps', 'apps.html')">
-          <img src="https://img.icons8.com/fluency/48/000000/application-window.png" alt="Apps Icon">
-          <span>Apps</span>
-        </div>
-        <div class="app-tile" onclick="openWindow('Games', 'games.html')">
-          <img src="https://img.icons8.com/fluency/48/000000/game-controller.png" alt="Games Icon">
-          <span>Games</span>
-        </div>
-        <div class="app-tile" onclick="openWindow('Terminal', 'terminal.html')">
-          <img src="https://img.icons8.com/fluency/48/000000/console.png" alt="Terminal Icon">
-          <span>Terminal</span>
-        </div>
-        <div class="app-tile" onclick="openWindow('Settings', 'settings.html')">
-          <img src="https://img.icons8.com/fluency/48/000000/settings.png" alt="Settings Icon">
-          <span>Settings</span>
-        </div>
-        <div class="app-tile" onclick="openWindow('Batch Editor', 'batch.html')">
-          <img src="https://img.icons8.com/fluency/48/000000/code.png" alt="Batch Editor Icon">
-          <span>Batch Editor</span>
-        </div>
+        <!-- Optionally, you can generate grid items for the start menu too -->
       </div>
     </div>
-
+    
     <!-- Quick Settings Panel -->
     <div class="quick-settings" id="quickSettings">
       <h3>Quick Settings</h3>
@@ -489,7 +409,7 @@
       <input type="text" id="qsWallpaper" placeholder="Enter wallpaper URL">
       <button onclick="changeWallpaper()">Apply Wallpaper</button>
     </div>
-
+    
     <!-- Taskbar -->
     <div class="taskbar">
       <!-- Left Section -->
@@ -503,12 +423,7 @@
           </svg>
           <span>Start</span>
         </div>
-        <div class="nav-item" onclick="openWindow('File Explorer', 'explorer.html')">
-          <svg viewBox="0 0 24 24" fill="#fff">
-            <path d="M10 4H4v16h16V8h-10zM4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/>
-          </svg>
-          <span>Explorer</span>
-        </div>
+        <!-- Removed File Explorer nav-item -->
         <div class="nav-item" onclick="openWindow('Browser', 'browser.html')">
           <svg viewBox="0 0 24 24" fill="#fff">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
@@ -528,76 +443,21 @@
       </div>
     </div>
   </div>
-
+  
   <!-- ---------- Container for Open Windows ---------- -->
   <div id="windowContainer"></div>
-
+  
   <script>
-    /* ===== Authentication Functions using localStorage ===== */
-    function signup() {
-      const username = document.getElementById('signupUsername').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-      const password = document.getElementById('signupPassword').value;
-      if (username && email && password) {
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        if (users.find(u => u.username === username)) {
-          alert("User already exists. Please log in.");
-          return;
-        }
-        const newUser = { username, email, password };
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('currentUser', JSON.stringify(newUser));
-        document.getElementById('userName').textContent = username;
-        document.getElementById('authOverlay').style.display = 'none';
-      } else {
-        alert("Please fill in all fields.");
-      }
-    }
-    function login() {
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      if (username && password) {
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        let user = users.find(u => u.username === username && u.password === password);
-        if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          document.getElementById('userName').textContent = username;
-          document.getElementById('authOverlay').style.display = 'none';
-        } else {
-          alert("Invalid username or password.");
-        }
-      } else {
-        alert("Please enter username and password.");
-      }
-    }
-    function switchToSignup() {
-      document.getElementById('loginForm').classList.remove('active');
-      document.getElementById('signupForm').classList.add('active');
-    }
-    function switchToLogin() {
-      document.getElementById('signupForm').classList.remove('active');
-      document.getElementById('loginForm').classList.add('active');
-    }
-
-    /* ===== On Page Load: Check for Logged-in User & Hide Auth Overlay if Found ===== */
+    /* ---------- Loading Screen Fade-out ---------- */
     window.addEventListener('load', () => {
-      // Check if a user is already logged in
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        const user = JSON.parse(currentUser);
-        document.getElementById('userName').textContent = user.username;
-        document.getElementById('authOverlay').style.display = 'none';
-      }
-      // Hide the loading screen after 3 seconds with fade-out
       setTimeout(() => {
         const ls = document.getElementById('loadingScreen');
         ls.classList.add('fade-out');
         setTimeout(() => { ls.style.display = 'none'; }, 500);
       }, 3000);
     });
-
-    /* ===== Clock Update ===== */
+    
+    /* ---------- Clock Update ---------- */
     function updateClock() {
       const clockEl = document.getElementById('clock');
       const now = new Date();
@@ -610,8 +470,8 @@
     }
     setInterval(updateClock, 1000);
     updateClock();
-
-    /* ===== Open Window Function ===== */
+    
+    /* ---------- Open Window Function ---------- */
     function openWindow(title, url) {
       const container = document.getElementById('windowContainer');
       const win = document.createElement('div');
@@ -673,8 +533,8 @@
          el.textContent = '□';
       }
     }
-
-    /* ===== Draggable Windows ===== */
+    
+    /* ---------- Draggable Windows ---------- */
     function makeDraggable(el) {
       let isDragging = false, offsetX, offsetY;
       const titlebar = el.querySelector('.titlebar');
@@ -693,8 +553,8 @@
       });
       document.addEventListener('mouseup', () => isDragging = false);
     }
-
-    /* ===== Resizable Windows ===== */
+    
+    /* ---------- Resizable Windows ---------- */
     function makeResizable(el) {
       const resizer = el.querySelector('.resizer');
       let isResizing = false, startX, startY, startWidth, startHeight;
@@ -719,8 +579,8 @@
         document.documentElement.removeEventListener('mouseup', stopResize, false);
       }
     }
-
-    /* ===== Menu Toggles ===== */
+    
+    /* ---------- Menu Toggles ---------- */
     const startButton = document.getElementById('startButton');
     const startMenu = document.getElementById('startMenu');
     startButton.addEventListener('click', (e) => {
@@ -743,25 +603,18 @@
         quickSettings.classList.remove('active');
       }
     });
-
-    /* ===== User Profile Update via postMessage (optional) ===== */
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'updateUser') {
-        document.getElementById('userName').textContent = event.data.name || 'User Name';
-        document.getElementById('userPfp').src = event.data.pfp || 'https://img.icons8.com/fluency/48/000000/user.png';
-      }
-    });
-
-    /* ===== Desktop Icons Data (with real icon URLs) ===== */
+    
+    /* ---------- Desktop Icons Data (Using JSON) ---------- */
     const desktopIconsData = [
       { name: 'Apps', url: 'apps.html', icon: 'https://img.icons8.com/fluency/48/000000/application-window.png' },
       { name: 'Games', url: 'games.html', icon: 'https://img.icons8.com/fluency/48/000000/game-controller.png' },
       { name: 'Terminal', url: 'terminal.html', icon: 'https://img.icons8.com/fluency/48/000000/console.png' },
       { name: 'Settings', url: 'settings.html', icon: 'https://img.icons8.com/fluency/48/000000/settings.png' },
-      { name: 'Batch Editor', url: 'batch.html', icon: 'https://img.icons8.com/fluency/48/000000/code.png' },
-      { name: 'File Explorer', url: 'explorer.html', icon: 'https://img.icons8.com/fluency/48/000000/folder-invoices.png' },
       { name: 'Browser', url: 'browser.html', icon: 'https://img.icons8.com/fluency/48/000000/internet.png' },
-      { name: 'User Profile', url: 'userprofile.html', icon: 'https://img.icons8.com/fluency/48/000000/user.png' }
+      { name: 'User Profile', url: 'userprofile.html', icon: 'https://img.icons8.com/fluency/48/000000/user.png' },
+      { name: 'Music', url: 'music.html', icon: 'https://img.icons8.com/fluency/48/000000/musical-notes.png' },
+      { name: 'Photos', url: 'photos.html', icon: 'https://img.icons8.com/fluency/48/000000/picture.png' },
+      { name: 'Calculator', url: 'calculator.html', icon: 'https://img.icons8.com/fluency/48/000000/calculator.png' }
     ];
     const desktopIconsContainer = document.getElementById('desktopIcons');
     desktopIconsData.forEach(item => {
@@ -773,8 +626,8 @@
       });
       desktopIconsContainer.appendChild(iconDiv);
     });
-
-    /* ===== Wallpaper Change Function ===== */
+    
+    /* ---------- Wallpaper Change Function ---------- */
     function changeWallpaper() {
       const url = document.getElementById('qsWallpaper').value.trim();
       if (url) {
