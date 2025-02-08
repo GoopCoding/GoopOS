@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goopi Terminal</title>
+    <style>
+        body { font-family: monospace; background: black; color: cyan; padding: 10px; }
+        #terminal { height: 80vh; overflow-y: auto; }
+        input { background: black; color: cyan; border: none; outline: none; width: 100%; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div id="terminal"></div>
+    <input id="command" autofocus>
+    
+    <script>
+        const terminal = document.getElementById("terminal");
+        const input = document.getElementById("command");
+        
+        async function fetchJoke() {
+            const res = await fetch('https://official-joke-api.appspot.com/random_joke');
+            const data = await res.json();
+            return `${data.setup} - ${data.punchline}`;
+        }
+
+        async function fetchQuote() {
+            const res = await fetch('https://api.quotable.io/random');
+            const data = await res.json();
+            return `${data.content} - ${data.author}`;
+        }
+
+        async function fetchWeather() {
+            const res = await fetch('https://wttr.in/?format=%C+%t');
+            const data = await res.text();
+            return data;
+        }
+        
+        const commands = {
+            help: "Available commands: help, clear, echo, time, date, random, about, math, greet, reverse, uppercase, lowercase, len, reload, url, sum, product, square, cube, sqrt, weather, joke, quote, ascii, lorem, name, hex, binary, ip, useragent, ping, whoami, uptime, path, ls, mkdir, rmdir, touch, rm, cat, head, tail, chmod, cp, mv, ps, kill, grep, awk, sed, diff, wc, history",
+            clear: () => { terminal.innerHTML = ""; },
+            echo: (args) => args.join(" "),
+            time: () => new Date().toLocaleTimeString(),
+            date: () => new Date().toLocaleDateString(),
+            random: () => Math.random(),
+            about: "Goopi Terminal v1.0 - A simple web terminal.",
+            math: (args) => eval(args.join("")),
+            greet: (args) => `Hello, ${args.join(" ") || "User"}!`,
+            reverse: (args) => args.join(" ").split("").reverse().join(""),
+            uppercase: (args) => args.join(" ").toUpperCase(),
+            lowercase: (args) => args.join(" ").toLowerCase(),
+            len: (args) => args.join(" ").length,
+            reload: () => location.reload(),
+            url: () => location.href,
+            sum: (args) => args.reduce((a, b) => a + Number(b), 0),
+            product: (args) => args.reduce((a, b) => a * Number(b), 1),
+            square: (args) => args.map(n => n ** 2).join(", "),
+            cube: (args) => args.map(n => n ** 3).join(", "),
+            sqrt: (args) => args.map(n => Math.sqrt(n)).join(", "),
+            weather: fetchWeather,
+            joke: fetchJoke,
+            quote: fetchQuote,
+            ascii: () => "(>'_')> <('_'<) ^('_')^ v('_')v",
+            lorem: () => "Lorem ipsum dolor sit amet...",
+            name: () => "Goopi User",
+            hex: (args) => args.map(n => Number(n).toString(16)).join(", "),
+            binary: (args) => args.map(n => Number(n).toString(2)).join(", "),
+            ip: async () => (await fetch('https://api.ipify.org')).text(),
+            useragent: () => navigator.userAgent,
+            ping: () => "PONG",
+            whoami: () => "You are a Goopi user.",
+            uptime: () => "System running for: " + Math.floor(performance.now() / 1000) + " seconds",
+            path: () => location.pathname,
+            ls: () => "Desktop  Documents  Downloads  Music  Pictures  Videos",
+            mkdir: (args) => `Created directory: ${args.join(" ")}`,
+            rmdir: (args) => `Removed directory: ${args.join(" ")}`,
+            touch: (args) => `Created file: ${args.join(" ")}`,
+            rm: (args) => `Removed file: ${args.join(" ")}`,
+            cat: (args) => `Displaying content of: ${args.join(" ")}`,
+            head: (args) => `Showing first lines of: ${args.join(" ")}`,
+            tail: (args) => `Showing last lines of: ${args.join(" ")}`,
+            chmod: (args) => `Changed permissions of ${args.join(" ")}`,
+            cp: (args) => `Copied ${args.join(" ")}`,
+            mv: (args) => `Moved ${args.join(" ")}`,
+            ps: () => "PID   COMMAND\n1234  goopi-terminal",
+            kill: (args) => `Killed process ${args.join(" ")}`,
+            grep: (args) => `Searching for: ${args.join(" ")}`,
+            awk: (args) => `Processing data with awk: ${args.join(" ")}`,
+            sed: (args) => `Performing text replacement with sed: ${args.join(" ")}`,
+            diff: (args) => `Comparing files: ${args.join(" ")}`,
+            wc: (args) => `Word count for ${args.join(" ")}`,
+            history: () => "Command history feature coming soon...",
+        };
+        
+        async function executeCommand(commandLine) {
+            let [cmd, ...args] = commandLine.split(" ");
+            let output = commands[cmd] instanceof Function ? await commands[cmd](args) : commands[cmd] || `Unknown command: ${cmd}`;
+            terminal.innerHTML += `~~>< ${commandLine}<br>${output}<br>`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        input.addEventListener("keydown", async (e) => {
+            if (e.key === "Enter") {
+                await executeCommand(input.value);
+                input.value = "";
+            }
+        });
+    </script>
+</body>
+</html>
