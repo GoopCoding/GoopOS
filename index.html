@@ -20,7 +20,7 @@
     *, *::before, *::after { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; }
 
-    /* Authentication Overlay (Login/Signup) */
+    /* ---------- Authentication Overlay (Login/Signup) ---------- */
     #authOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -62,7 +62,7 @@
       cursor: pointer;
     }
 
-    /* Loading Screen */
+    /* ---------- Loading Screen ---------- */
     #loadingScreen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -107,7 +107,7 @@
       to { width: 100%; }
     }
 
-    /* Desktop Background */
+    /* ---------- Desktop Background ---------- */
     .desktop {
       position: relative;
       width: 100%;
@@ -116,7 +116,7 @@
       background-size: cover;
     }
 
-    /* Desktop Icons */
+    /* ---------- Desktop Icons ---------- */
     .desktop-icons {
       position: absolute;
       top: 60px;
@@ -150,7 +150,7 @@
       text-align: center;
     }
 
-    /* Taskbar */
+    /* ---------- Taskbar ---------- */
     .taskbar {
       position: absolute;
       bottom: 0;
@@ -207,7 +207,7 @@
       transform: scale(1.1);
     }
 
-    /* Start Menu */
+    /* ---------- Start Menu ---------- */
     .start-menu {
       position: absolute;
       bottom: 58px;
@@ -280,7 +280,7 @@
       color: #333;
     }
 
-    /* Quick Settings Panel */
+    /* ---------- Quick Settings Panel ---------- */
     .quick-settings {
       position: absolute;
       bottom: 58px;
@@ -318,7 +318,7 @@
       cursor: pointer;
     }
 
-    /* Window (Simulated App Windows) */
+    /* ---------- Window (Simulated App Windows) ---------- */
     .window {
       position: absolute;
       background: #fff;
@@ -328,7 +328,7 @@
       display: flex;
       flex-direction: column;
       transition: all 0.2s ease;
-      /* Allow browser native resizing (in addition to our custom handle) */
+      /* Allow browser-native resizing in addition to our custom handle */
       resize: both;
       overflow: auto;
     }
@@ -394,7 +394,7 @@
   </style>
 </head>
 <body>
-  <!-- Authentication Overlay -->
+  <!-- ---------- Authentication Overlay ---------- -->
   <div id="authOverlay">
     <div id="loginForm" class="auth-form active">
       <h2>Login</h2>
@@ -413,7 +413,7 @@
     </div>
   </div>
 
-  <!-- Loading Screen -->
+  <!-- ---------- Loading Screen ---------- -->
   <div id="loadingScreen">
     <div class="logo">
       <!-- Animated Goop SVG -->
@@ -434,7 +434,7 @@
     </div>
   </div>
 
-  <!-- Desktop Environment -->
+  <!-- ---------- Desktop Environment ---------- -->
   <div class="desktop">
     <!-- Desktop Icons -->
     <div class="desktop-icons" id="desktopIcons">
@@ -447,28 +447,28 @@
         <h2>GoopOS</h2>
       </div>
       <div class="user-info">
-        <img src="https://via.placeholder.com/48?text=User" alt="User" id="userPfp">
+        <img src="https://img.icons8.com/fluency/48/000000/user.png" alt="User" id="userPfp">
         <div class="name" id="userName">User Name</div>
       </div>
       <div class="apps-grid" id="appsGrid">
         <div class="app-tile" onclick="openWindow('Apps', 'apps.html')">
-          <img src="https://via.placeholder.com/40?text=A" alt="Apps Icon">
+          <img src="https://img.icons8.com/fluency/48/000000/application-window.png" alt="Apps Icon">
           <span>Apps</span>
         </div>
         <div class="app-tile" onclick="openWindow('Games', 'games.html')">
-          <img src="https://via.placeholder.com/40?text=G" alt="Games Icon">
+          <img src="https://img.icons8.com/fluency/48/000000/game-controller.png" alt="Games Icon">
           <span>Games</span>
         </div>
         <div class="app-tile" onclick="openWindow('Terminal', 'terminal.html')">
-          <img src="https://via.placeholder.com/40?text=T" alt="Terminal Icon">
+          <img src="https://img.icons8.com/fluency/48/000000/console.png" alt="Terminal Icon">
           <span>Terminal</span>
         </div>
         <div class="app-tile" onclick="openWindow('Settings', 'settings.html')">
-          <img src="https://via.placeholder.com/40?text=S" alt="Settings Icon">
+          <img src="https://img.icons8.com/fluency/48/000000/settings.png" alt="Settings Icon">
           <span>Settings</span>
         </div>
         <div class="app-tile" onclick="openWindow('Batch Editor', 'batch.html')">
-          <img src="https://via.placeholder.com/40?text=B" alt="Batch Editor Icon">
+          <img src="https://img.icons8.com/fluency/48/000000/code.png" alt="Batch Editor Icon">
           <span>Batch Editor</span>
         </div>
       </div>
@@ -522,39 +522,53 @@
       </div>
       <!-- Right Section -->
       <div class="taskbar-right">
-        <img src="https://via.placeholder.com/24?text=N" alt="Notifications" class="system-icon" onclick="openWindow('Notifications', 'notifications.html')">
-        <img src="https://via.placeholder.com/24?text=Q" alt="Quick Settings" class="system-icon" id="quickSettingsBtn">
-        <img src="https://via.placeholder.com/24?text=P" alt="Profile" class="system-icon" onclick="openWindow('User Profile', 'userprofile.html')">
+        <img src="https://img.icons8.com/fluency/24/000000/appointment-reminders.png" alt="Notifications" class="system-icon" onclick="openWindow('Notifications', 'notifications.html')">
+        <img src="https://img.icons8.com/fluency/24/000000/slider.png" alt="Quick Settings" class="system-icon" id="quickSettingsBtn">
+        <img src="https://img.icons8.com/fluency/24/000000/user-male-circle.png" alt="Profile" class="system-icon" onclick="openWindow('User Profile', 'userprofile.html')">
       </div>
     </div>
   </div>
 
-  <!-- Container for Open Windows -->
+  <!-- ---------- Container for Open Windows ---------- -->
   <div id="windowContainer"></div>
 
   <script>
-    /* ========= Authentication Functions ========= */
-    function login() {
-      const username = document.getElementById('loginUsername').value;
-      const password = document.getElementById('loginPassword').value;
-      if(username && password) {
-        // Simulate login success and update user info
-        document.getElementById('authOverlay').style.display = 'none';
-        document.getElementById('userName').textContent = username;
-      } else {
-        alert("Please enter username and password.");
-      }
-    }
+    /* ===== Authentication Functions using localStorage ===== */
     function signup() {
-      const username = document.getElementById('signupUsername').value;
-      const email = document.getElementById('signupEmail').value;
+      const username = document.getElementById('signupUsername').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
       const password = document.getElementById('signupPassword').value;
-      if(username && email && password) {
-        // Simulate signup and auto-login
-        document.getElementById('authOverlay').style.display = 'none';
+      if (username && email && password) {
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        if (users.find(u => u.username === username)) {
+          alert("User already exists. Please log in.");
+          return;
+        }
+        const newUser = { username, email, password };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
         document.getElementById('userName').textContent = username;
+        document.getElementById('authOverlay').style.display = 'none';
       } else {
         alert("Please fill in all fields.");
+      }
+    }
+    function login() {
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (username && password) {
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let user = users.find(u => u.username === username && u.password === password);
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          document.getElementById('userName').textContent = username;
+          document.getElementById('authOverlay').style.display = 'none';
+        } else {
+          alert("Invalid username or password.");
+        }
+      } else {
+        alert("Please enter username and password.");
       }
     }
     function switchToSignup() {
@@ -566,8 +580,16 @@
       document.getElementById('loginForm').classList.add('active');
     }
 
-    /* ========= Loading Screen ========= */
+    /* ===== On Page Load: Check for Logged-in User & Hide Auth Overlay if Found ===== */
     window.addEventListener('load', () => {
+      // Check if a user is already logged in
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const user = JSON.parse(currentUser);
+        document.getElementById('userName').textContent = user.username;
+        document.getElementById('authOverlay').style.display = 'none';
+      }
+      // Hide the loading screen after 3 seconds with fade-out
       setTimeout(() => {
         const ls = document.getElementById('loadingScreen');
         ls.classList.add('fade-out');
@@ -575,7 +597,7 @@
       }, 3000);
     });
 
-    /* ========= Clock Update ========= */
+    /* ===== Clock Update ===== */
     function updateClock() {
       const clockEl = document.getElementById('clock');
       const now = new Date();
@@ -589,7 +611,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    /* ========= Open Window Function ========= */
+    /* ===== Open Window Function ===== */
     function openWindow(title, url) {
       const container = document.getElementById('windowContainer');
       const win = document.createElement('div');
@@ -652,7 +674,7 @@
       }
     }
 
-    /* ========= Draggable Windows ========= */
+    /* ===== Draggable Windows ===== */
     function makeDraggable(el) {
       let isDragging = false, offsetX, offsetY;
       const titlebar = el.querySelector('.titlebar');
@@ -672,7 +694,7 @@
       document.addEventListener('mouseup', () => isDragging = false);
     }
 
-    /* ========= Resizable Windows ========= */
+    /* ===== Resizable Windows ===== */
     function makeResizable(el) {
       const resizer = el.querySelector('.resizer');
       let isResizing = false, startX, startY, startWidth, startHeight;
@@ -698,7 +720,7 @@
       }
     }
 
-    /* ========= Menu Toggles ========= */
+    /* ===== Menu Toggles ===== */
     const startButton = document.getElementById('startButton');
     const startMenu = document.getElementById('startMenu');
     startButton.addEventListener('click', (e) => {
@@ -722,24 +744,24 @@
       }
     });
 
-    /* ========= User Profile Update via postMessage ========= */
+    /* ===== User Profile Update via postMessage (optional) ===== */
     window.addEventListener('message', (event) => {
       if (event.data && event.data.type === 'updateUser') {
         document.getElementById('userName').textContent = event.data.name || 'User Name';
-        document.getElementById('userPfp').src = event.data.pfp || 'https://via.placeholder.com/48?text=User';
+        document.getElementById('userPfp').src = event.data.pfp || 'https://img.icons8.com/fluency/48/000000/user.png';
       }
     });
 
-    /* ========= Desktop Icons Data ========= */
+    /* ===== Desktop Icons Data (with real icon URLs) ===== */
     const desktopIconsData = [
-      { name: 'Apps', url: 'apps.html', icon: 'https://via.placeholder.com/40?text=A' },
-      { name: 'Games', url: 'games.html', icon: 'https://via.placeholder.com/40?text=G' },
-      { name: 'Terminal', url: 'terminal.html', icon: 'https://via.placeholder.com/40?text=T' },
-      { name: 'Settings', url: 'settings.html', icon: 'https://via.placeholder.com/40?text=S' },
-      { name: 'Batch Editor', url: 'batch.html', icon: 'https://via.placeholder.com/40?text=B' },
-      { name: 'File Explorer', url: 'explorer.html', icon: 'https://via.placeholder.com/40?text=E' },
-      { name: 'Browser', url: 'browser.html', icon: 'https://via.placeholder.com/40?text=Br' },
-      { name: 'User Profile', url: 'userprofile.html', icon: 'https://via.placeholder.com/40?text=U' }
+      { name: 'Apps', url: 'apps.html', icon: 'https://img.icons8.com/fluency/48/000000/application-window.png' },
+      { name: 'Games', url: 'games.html', icon: 'https://img.icons8.com/fluency/48/000000/game-controller.png' },
+      { name: 'Terminal', url: 'terminal.html', icon: 'https://img.icons8.com/fluency/48/000000/console.png' },
+      { name: 'Settings', url: 'settings.html', icon: 'https://img.icons8.com/fluency/48/000000/settings.png' },
+      { name: 'Batch Editor', url: 'batch.html', icon: 'https://img.icons8.com/fluency/48/000000/code.png' },
+      { name: 'File Explorer', url: 'explorer.html', icon: 'https://img.icons8.com/fluency/48/000000/folder-invoices.png' },
+      { name: 'Browser', url: 'browser.html', icon: 'https://img.icons8.com/fluency/48/000000/internet.png' },
+      { name: 'User Profile', url: 'userprofile.html', icon: 'https://img.icons8.com/fluency/48/000000/user.png' }
     ];
     const desktopIconsContainer = document.getElementById('desktopIcons');
     desktopIconsData.forEach(item => {
@@ -752,10 +774,10 @@
       desktopIconsContainer.appendChild(iconDiv);
     });
 
-    /* ========= Wallpaper Change Function ========= */
+    /* ===== Wallpaper Change Function ===== */
     function changeWallpaper() {
-      const url = document.getElementById('qsWallpaper').value;
-      if(url) {
+      const url = document.getElementById('qsWallpaper').value.trim();
+      if (url) {
         document.querySelector('.desktop').style.backgroundImage = `url('${url}')`;
       } else {
         alert("Please enter a valid URL.");
