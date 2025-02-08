@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APPS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <meta property="og:title" content="APPS">
+  <meta property="og:description" content="Apps for the official GoopOS">
+  <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/4/41/Simple_game_icon.svg">
+  <meta name="keywords" content="GoopOS, GoopAPPS, GoopOSAPPS, Goop-app, goopss">
+  <meta name="author" content="Nonoxi">
+  <style>
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background-color: #0a0a0a;
+      color: #00ff6a;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Custom Cursor */
+    body * {
+      cursor: none !important;
+    }
+    .custom-cursor {
+      width: 20px;
+      height: 20px;
+      background-color: #00ff6a;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+
+    /* Startup Screen */
+    #startupScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #000;
+      flex-direction: column;
+      font-size: 1.5rem;
+      white-space: pre-wrap;
+      overflow: hidden;
+      color: #00ff6a;
+    }
+
+    #mainContent {
+      display: none;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Tab Bar */
+    #tabBar {
+      display: flex;
+      background-color: #1a1a3d;
+      padding: 10px;
+      overflow-x: auto;
+      border-bottom: 3px solid #00ff6a;
+      box-shadow: 0px 4px 10px rgba(0, 255, 106, 0.2);
+    }
+
+    .tab {
+      padding: 8px 15px;
+      margin-right: 10px;
+      background-color: #111;
+      color: #00ff6a;
+      border: 1px solid #00ff6a;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .tab:hover {
+      background-color: #222;
+      transform: scale(1.05);
+    }
+
+    .tab .close {
+      margin-left: 10px;
+      color: #ff4c4c;
+      cursor: pointer;
+    }
+
+    /* Iframe Container */
+    #iframeContainer {
+      position: fixed;
+      top: 15%;
+      left: 15%;
+      width: 70%;
+      height: 70%;
+      background-color: rgba(0, 0, 0, 0.95);
+      border: 3px solid #00ff6a;
+      border-radius: 12px;
+      z-index: 1000;
+      display: none;
+      resize: both;
+      overflow: auto;
+      box-shadow: 0px 6px 15px rgba(0, 255, 106, 0.3);
+    }
+
+    #iframeContainer iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+
+    .close-iframe {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      padding: 6px 12px;
+      background-color: #ff4c4c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const games = [
+      {
+        id: "ttoks1",
+        title: "Tiktok",
+        thumbnail: "https://th.bing.com/th/id/R.86888d01a32c8e8d7f15c3abb8fd7d13?rik=fHBGUk4CsjW64A&pid=ImgRaw&r=0",
+        url: "https://edgedcircles.com/uv/service/hvtrs8%2F-wuw%2Ctkkvoi.aoo%2Fgxrlmrg/",
+      }
+    ];
+  </script>
+</body>
+</html>
