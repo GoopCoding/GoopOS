@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>HexixOS – Windows/puter‑Style Prototype</title>
+  <title>GoopOS – Modern Desktop Environment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Using Segoe UI for a modern Windows feel -->
   <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
@@ -15,6 +15,7 @@
       font-family: 'Segoe UI', sans-serif;
       overflow: hidden;
       user-select: none;
+      background: #111;
     }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; }
@@ -30,10 +31,22 @@
       justify-content: center;
       align-items: center;
       color: #fff;
+      opacity: 1;
+    }
+    /* Fade‐out effect */
+    #loadingScreen.fade-out {
+      opacity: 0;
+      transition: opacity 0.5s ease-out;
     }
     #loadingScreen .logo {
       width: 100px;
       height: 100px;
+      margin-bottom: 10px;
+    }
+    /* Loading title beneath logo */
+    #loadingScreen .loading-title {
+      font-size: 24px;
+      font-weight: 600;
       margin-bottom: 20px;
     }
     #loadingScreen .progress {
@@ -46,7 +59,7 @@
     #loadingScreen .progress-bar {
       width: 0%;
       height: 100%;
-      background: #0078d7;
+      background: #0af;
       animation: loading 3s ease-out forwards;
     }
     @keyframes loading {
@@ -73,8 +86,6 @@
       gap: 10px;
       width: calc(100% - 20px);
       padding: 10px;
-      /* Optional: add a subtle background if desired */
-      /* background: rgba(0,0,0,0.2); */
     }
     .desktop-icons .icon {
       display: flex;
@@ -172,6 +183,17 @@
     .start-menu.active {
       display: flex;
     }
+    /* Start Menu Header */
+    .start-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      margin-bottom: 8px;
+    }
+    .start-header h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
     .start-menu .user-info {
       display: flex;
       align-items: center;
@@ -261,15 +283,20 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: all 0.2s ease;
+    }
+    .window.minimized .content {
+      display: none;
     }
     .window .titlebar {
-      background: #0078d7;
+      background: #0af;
       color: #fff;
       padding: 6px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: move;
+      user-select: none;
     }
     .window .titlebar .title {
       font-size: 14px;
@@ -301,20 +328,28 @@
       height: 100%;
       border: none;
     }
+    /* Maximized window styling */
+    .window.maximized {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: calc(100% - 48px) !important; /* leave room for the taskbar */
+    }
   </style>
 </head>
 <body>
   <!-- Loading Screen -->
   <div id="loadingScreen">
     <div class="logo">
-      <!-- Replace with your own logo (SVG or image) -->
+      <!-- Updated GoopOS Logo SVG -->
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="45" fill="#000" stroke="#ff8c00" stroke-width="5"/>
-        <path d="M50,10 L55,40 L45,40 Z" fill="#ff0"/>
-        <circle cx="50" cy="50" r="20" fill="#b22222"/>
+        <circle cx="50" cy="50" r="45" fill="#121212" stroke="#0af" stroke-width="5"/>
+        <path d="M50,10 L55,40 L45,40 Z" fill="#0af"/>
+        <circle cx="50" cy="50" r="20" fill="#0cf"/>
         <rect x="48" y="60" width="4" height="20" fill="#fff"/>
       </svg>
     </div>
+    <div class="loading-title">GoopOS</div>
     <div class="progress">
       <div class="progress-bar"></div>
     </div>
@@ -329,6 +364,9 @@
 
     <!-- Start Menu -->
     <div class="start-menu" id="startMenu">
+      <div class="start-header">
+        <h2>GoopOS</h2>
+      </div>
       <div class="user-info">
         <img src="https://via.placeholder.com/48?text=User" alt="User" id="userPfp">
         <div class="name" id="userName">User Name</div>
@@ -377,9 +415,9 @@
       <div class="taskbar-left">
         <div class="start-button" id="startButton">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#000" stroke="#ff8c00" stroke-width="5"/>
-            <path d="M50,10 L55,40 L45,40 Z" fill="#ff0"/>
-            <circle cx="50" cy="50" r="20" fill="#b22222"/>
+            <circle cx="50" cy="50" r="45" fill="#121212" stroke="#0af" stroke-width="5"/>
+            <path d="M50,10 L55,40 L45,40 Z" fill="#0af"/>
+            <circle cx="50" cy="50" r="20" fill="#0cf"/>
             <rect x="48" y="60" width="4" height="20" fill="#fff"/>
           </svg>
           <span>Start</span>
@@ -414,10 +452,12 @@
   <div id="windowContainer"></div>
 
   <script>
-    /***** Hide the Loading Screen after 3 seconds *****/
+    /***** Hide the Loading Screen after 3 seconds with fade-out *****/
     window.addEventListener('load', () => {
       setTimeout(() => {
-        document.getElementById('loadingScreen').style.display = 'none';
+        const ls = document.getElementById('loadingScreen');
+        ls.classList.add('fade-out');
+        setTimeout(() => { ls.style.display = 'none'; }, 500);
       }, 3000);
     });
 
@@ -449,7 +489,9 @@
         <div class="titlebar">
           <div class="title">${title}</div>
           <div class="window-controls">
-            <span onclick="closeWindow(this)">✕</span>
+            <span class="minimize-btn" onclick="minimizeWindow(this)">&#x2013;</span>
+            <span class="maximize-btn" onclick="toggleMaximizeWindow(this)">□</span>
+            <span class="close-btn" onclick="closeWindow(this)">✕</span>
           </div>
         </div>
         <div class="content">
@@ -458,6 +500,12 @@
       `;
       container.appendChild(win);
       makeDraggable(win);
+      // Add double-click on titlebar to toggle maximize
+      const titlebar = win.querySelector('.titlebar');
+      titlebar.addEventListener('dblclick', () => {
+        const maxBtn = win.querySelector('.maximize-btn');
+        toggleMaximizeWindow(maxBtn);
+      });
       // Hide any open menus
       document.getElementById('startMenu').classList.remove('active');
       document.getElementById('quickSettings').classList.remove('active');
@@ -466,12 +514,37 @@
       const win = el.closest('.window');
       win.parentNode.removeChild(win);
     }
+    function minimizeWindow(el) {
+      const win = el.closest('.window');
+      win.classList.toggle('minimized');
+    }
+    function toggleMaximizeWindow(el) {
+      const win = el.closest('.window');
+      if (!win.classList.contains('maximized')) {
+         // Store original dimensions for restore
+         win.dataset.originalTop = win.style.top;
+         win.dataset.originalLeft = win.style.left;
+         win.dataset.originalWidth = win.style.width;
+         win.dataset.originalHeight = win.style.height;
+         win.classList.add('maximized');
+         el.textContent = '❐'; // Change icon to indicate restore
+      } else {
+         win.classList.remove('maximized');
+         win.style.top = win.dataset.originalTop;
+         win.style.left = win.dataset.originalLeft;
+         win.style.width = win.dataset.originalWidth;
+         win.style.height = win.dataset.originalHeight;
+         el.textContent = '□';
+      }
+    }
 
     /***** Draggable Windows *****/
     function makeDraggable(el) {
       let isDragging = false, offsetX, offsetY;
       const titlebar = el.querySelector('.titlebar');
       titlebar.addEventListener('mousedown', (e) => {
+        // If the window is maximized, do not start drag
+        if (el.classList.contains('maximized')) return;
         isDragging = true;
         offsetX = e.clientX - el.getBoundingClientRect().left;
         offsetY = e.clientY - el.getBoundingClientRect().top;
