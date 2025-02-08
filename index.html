@@ -7,9 +7,9 @@
   <!-- Using Segoe UI for a modern Windows feel -->
   <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Custom cursor – replace 'custom-cursor.png' with your own cursor image */
+    /* Use a Google–hosted image for the cursor */
     body {
-      cursor: url('custom-cursor.png'), auto;
+      cursor: url('https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png') 16 16, auto;
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -20,12 +20,54 @@
     *, *::before, *::after { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; }
 
-    /***** Loading Screen *****/
+    /* Authentication Overlay (Login/Signup) */
+    #authOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .auth-form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 250px;
+    }
+    .auth-form.active {
+      display: flex;
+    }
+    .auth-form input {
+      margin: 5px 0;
+      padding: 8px;
+      width: 100%;
+    }
+    .auth-form button {
+      padding: 8px 16px;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+    .auth-form p {
+      font-size: 12px;
+    }
+    .auth-form a {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Loading Screen */
     #loadingScreen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: #000;
-      z-index: 9999;
+      z-index: 9000;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -33,17 +75,15 @@
       color: #fff;
       opacity: 1;
     }
-    /* Fade‐out effect */
     #loadingScreen.fade-out {
       opacity: 0;
       transition: opacity 0.5s ease-out;
     }
     #loadingScreen .logo {
-      width: 100px;
-      height: 100px;
+      width: 150px;
+      height: 150px;
       margin-bottom: 10px;
     }
-    /* Loading title beneath logo */
     #loadingScreen .loading-title {
       font-size: 24px;
       font-weight: 600;
@@ -67,7 +107,7 @@
       to { width: 100%; }
     }
 
-    /***** Desktop Background *****/
+    /* Desktop Background */
     .desktop {
       position: relative;
       width: 100%;
@@ -76,7 +116,7 @@
       background-size: cover;
     }
 
-    /***** Unified Desktop Icons Container *****/
+    /* Desktop Icons */
     .desktop-icons {
       position: absolute;
       top: 60px;
@@ -110,7 +150,7 @@
       text-align: center;
     }
 
-    /***** Taskbar (Navigation Bar) *****/
+    /* Taskbar */
     .taskbar {
       position: absolute;
       bottom: 0;
@@ -167,7 +207,7 @@
       transform: scale(1.1);
     }
 
-    /***** Start Menu *****/
+    /* Start Menu */
     .start-menu {
       position: absolute;
       bottom: 58px;
@@ -183,7 +223,6 @@
     .start-menu.active {
       display: flex;
     }
-    /* Start Menu Header */
     .start-header {
       padding: 8px 12px;
       border-bottom: 1px solid rgba(0,0,0,0.1);
@@ -241,7 +280,7 @@
       color: #333;
     }
 
-    /***** Quick Settings Panel *****/
+    /* Quick Settings Panel */
     .quick-settings {
       position: absolute;
       bottom: 58px;
@@ -269,12 +308,17 @@
       margin-bottom: 4px;
     }
     .quick-settings input[type="range"],
-    .quick-settings select {
+    .quick-settings select,
+    .quick-settings input[type="text"] {
       width: 100%;
       margin-bottom: 12px;
     }
+    .quick-settings button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
 
-    /***** Window (Simulated App Windows) *****/
+    /* Window (Simulated App Windows) */
     .window {
       position: absolute;
       background: #fff;
@@ -284,6 +328,9 @@
       display: flex;
       flex-direction: column;
       transition: all 0.2s ease;
+      /* Allow browser native resizing (in addition to our custom handle) */
+      resize: both;
+      overflow: auto;
     }
     .window.minimized .content {
       display: none;
@@ -328,25 +375,57 @@
       height: 100%;
       border: none;
     }
-    /* Maximized window styling */
     .window.maximized {
       top: 0 !important;
       left: 0 !important;
       width: 100% !important;
-      height: calc(100% - 48px) !important; /* leave room for the taskbar */
+      height: calc(100% - 48px) !important;
+    }
+    /* Resizer Handle */
+    .resizer {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      bottom: 0;
+      right: 0;
+      cursor: se-resize;
+      background: rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
+  <!-- Authentication Overlay -->
+  <div id="authOverlay">
+    <div id="loginForm" class="auth-form active">
+      <h2>Login</h2>
+      <input type="text" id="loginUsername" placeholder="Username" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button onclick="login()">Login</button>
+      <p>Don't have an account? <a onclick="switchToSignup()">Sign Up</a></p>
+    </div>
+    <div id="signupForm" class="auth-form">
+      <h2>Sign Up</h2>
+      <input type="text" id="signupUsername" placeholder="Username" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <input type="password" id="signupPassword" placeholder="Password" required>
+      <button onclick="signup()">Sign Up</button>
+      <p>Already have an account? <a onclick="switchToLogin()">Login</a></p>
+    </div>
+  </div>
+
   <!-- Loading Screen -->
   <div id="loadingScreen">
     <div class="logo">
-      <!-- Updated GoopOS Logo SVG -->
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="45" fill="#121212" stroke="#0af" stroke-width="5"/>
-        <path d="M50,10 L55,40 L45,40 Z" fill="#0af"/>
-        <circle cx="50" cy="50" r="20" fill="#0cf"/>
-        <rect x="48" y="60" width="4" height="20" fill="#fff"/>
+      <!-- Animated Goop SVG -->
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#0af">
+          <animate attributeName="d" dur="5s" repeatCount="indefinite"
+            values="
+              M44.8,-68.2C59.8,-55.7,70.7,-38.6,75.2,-20.5C79.7,-2.4,77.9,17.6,68.8,32.3C59.7,47,43.3,56.5,26.1,63.7C8.8,70.9,-9.2,75.8,-25.8,72.4C-42.4,69,-57.7,57.2,-67.5,41.2C-77.3,25.1,-81.7,4.9,-78.5,-14.6C-75.2,-34.2,-64.4,-52.7,-49.1,-65.3C-33.8,-77.8,-16.9,-84.3,-0.5,-83.9C15.9,-83.5,31.9,-76.1,44.8,-68.2Z;
+              M49.7,-63.4C63.8,-52.3,74.8,-34.8,76.2,-16.2C77.6,2.3,69.5,21.1,58.2,33.4C46.8,45.7,32.2,52.6,16.6,59.3C1,66,-15.6,72.5,-31.4,70.2C-47.1,67.9,-61.9,56.8,-70.2,40.2C-78.5,23.6,-80.3,1.5,-75.3,-18.3C-70.2,-38.1,-58.3,-55.5,-43,-66.2C-27.7,-76.9,-13.9,-80.1,2.3,-83.1C18.5,-86.1,37,-88.5,49.7,-63.4Z;
+              M44.8,-68.2C59.8,-55.7,70.7,-38.6,75.2,-20.5C79.7,-2.4,77.9,17.6,68.8,32.3C59.7,47,43.3,56.5,26.1,63.7C8.8,70.9,-9.2,75.8,-25.8,72.4C-42.4,69,-57.7,57.2,-67.5,41.2C-77.3,25.1,-81.7,4.9,-78.5,-14.6C-75.2,-34.2,-64.4,-52.7,-49.1,-65.3C-33.8,-77.8,-16.9,-84.3,-0.5,-83.9C15.9,-83.5,31.9,-76.1,44.8,-68.2Z
+            " />
+        </path>
       </svg>
     </div>
     <div class="loading-title">GoopOS</div>
@@ -357,9 +436,9 @@
 
   <!-- Desktop Environment -->
   <div class="desktop">
-    <!-- Unified Desktop Icons (Apps & Games) -->
+    <!-- Desktop Icons -->
     <div class="desktop-icons" id="desktopIcons">
-      <!-- Icons will be rendered dynamically from a data array -->
+      <!-- Icons will be generated dynamically -->
     </div>
 
     <!-- Start Menu -->
@@ -371,7 +450,6 @@
         <img src="https://via.placeholder.com/48?text=User" alt="User" id="userPfp">
         <div class="name" id="userName">User Name</div>
       </div>
-      <!-- Apps Section in the Start Menu -->
       <div class="apps-grid" id="appsGrid">
         <div class="app-tile" onclick="openWindow('Apps', 'apps.html')">
           <img src="https://via.placeholder.com/40?text=A" alt="Apps Icon">
@@ -407,9 +485,12 @@
       </select>
       <label for="qsVolume">Volume</label>
       <input type="range" id="qsVolume" min="0" max="100" value="50">
+      <label for="qsWallpaper">Wallpaper URL</label>
+      <input type="text" id="qsWallpaper" placeholder="Enter wallpaper URL">
+      <button onclick="changeWallpaper()">Apply Wallpaper</button>
     </div>
 
-    <!-- Taskbar / Navigation Bar -->
+    <!-- Taskbar -->
     <div class="taskbar">
       <!-- Left Section -->
       <div class="taskbar-left">
@@ -435,7 +516,7 @@
           <span>Browser</span>
         </div>
       </div>
-      <!-- Center Section: 12‑Hour Clock -->
+      <!-- Center Section: Clock -->
       <div class="taskbar-center">
         <div class="clock" id="clock">12:00 PM</div>
       </div>
@@ -452,7 +533,40 @@
   <div id="windowContainer"></div>
 
   <script>
-    /***** Hide the Loading Screen after 3 seconds with fade-out *****/
+    /* ========= Authentication Functions ========= */
+    function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      if(username && password) {
+        // Simulate login success and update user info
+        document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('userName').textContent = username;
+      } else {
+        alert("Please enter username and password.");
+      }
+    }
+    function signup() {
+      const username = document.getElementById('signupUsername').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      if(username && email && password) {
+        // Simulate signup and auto-login
+        document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('userName').textContent = username;
+      } else {
+        alert("Please fill in all fields.");
+      }
+    }
+    function switchToSignup() {
+      document.getElementById('loginForm').classList.remove('active');
+      document.getElementById('signupForm').classList.add('active');
+    }
+    function switchToLogin() {
+      document.getElementById('signupForm').classList.remove('active');
+      document.getElementById('loginForm').classList.add('active');
+    }
+
+    /* ========= Loading Screen ========= */
     window.addEventListener('load', () => {
       setTimeout(() => {
         const ls = document.getElementById('loadingScreen');
@@ -461,7 +575,7 @@
       }, 3000);
     });
 
-    /***** Clock: 12‑Hour Format with AM/PM *****/
+    /* ========= Clock Update ========= */
     function updateClock() {
       const clockEl = document.getElementById('clock');
       const now = new Date();
@@ -469,18 +583,17 @@
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
-      hours = hours ? hours : 12; // convert '0' to 12
+      hours = hours ? hours : 12;
       clockEl.textContent = `${hours}:${minutes} ${ampm}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    /***** Open Window Function *****/
+    /* ========= Open Window Function ========= */
     function openWindow(title, url) {
       const container = document.getElementById('windowContainer');
       const win = document.createElement('div');
       win.className = 'window';
-      // Random starting position for demo purposes
       win.style.top = (50 + Math.random() * 200) + 'px';
       win.style.left = (50 + Math.random() * 200) + 'px';
       win.style.width = '500px';
@@ -497,16 +610,18 @@
         <div class="content">
           <iframe src="${url}" title="${title}"></iframe>
         </div>
+        <div class="resizer"></div>
       `;
       container.appendChild(win);
       makeDraggable(win);
-      // Add double-click on titlebar to toggle maximize
+      makeResizable(win);
+      // Double-clicking the titlebar toggles maximize
       const titlebar = win.querySelector('.titlebar');
       titlebar.addEventListener('dblclick', () => {
         const maxBtn = win.querySelector('.maximize-btn');
         toggleMaximizeWindow(maxBtn);
       });
-      // Hide any open menus
+      // Hide open menus
       document.getElementById('startMenu').classList.remove('active');
       document.getElementById('quickSettings').classList.remove('active');
     }
@@ -521,13 +636,12 @@
     function toggleMaximizeWindow(el) {
       const win = el.closest('.window');
       if (!win.classList.contains('maximized')) {
-         // Store original dimensions for restore
          win.dataset.originalTop = win.style.top;
          win.dataset.originalLeft = win.style.left;
          win.dataset.originalWidth = win.style.width;
          win.dataset.originalHeight = win.style.height;
          win.classList.add('maximized');
-         el.textContent = '❐'; // Change icon to indicate restore
+         el.textContent = '❐';
       } else {
          win.classList.remove('maximized');
          win.style.top = win.dataset.originalTop;
@@ -538,12 +652,11 @@
       }
     }
 
-    /***** Draggable Windows *****/
+    /* ========= Draggable Windows ========= */
     function makeDraggable(el) {
       let isDragging = false, offsetX, offsetY;
       const titlebar = el.querySelector('.titlebar');
       titlebar.addEventListener('mousedown', (e) => {
-        // If the window is maximized, do not start drag
         if (el.classList.contains('maximized')) return;
         isDragging = true;
         offsetX = e.clientX - el.getBoundingClientRect().left;
@@ -559,7 +672,33 @@
       document.addEventListener('mouseup', () => isDragging = false);
     }
 
-    /***** Menu Toggles *****/
+    /* ========= Resizable Windows ========= */
+    function makeResizable(el) {
+      const resizer = el.querySelector('.resizer');
+      let isResizing = false, startX, startY, startWidth, startHeight;
+      resizer.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = parseInt(document.defaultView.getComputedStyle(el).width, 10);
+        startHeight = parseInt(document.defaultView.getComputedStyle(el).height, 10);
+        document.documentElement.addEventListener('mousemove', resize, false);
+        document.documentElement.addEventListener('mouseup', stopResize, false);
+      });
+      function resize(e) {
+        if (!isResizing) return;
+        el.style.width = (startWidth + e.clientX - startX) + 'px';
+        el.style.height = (startHeight + e.clientY - startY) + 'px';
+      }
+      function stopResize(e) {
+        isResizing = false;
+        document.documentElement.removeEventListener('mousemove', resize, false);
+        document.documentElement.removeEventListener('mouseup', stopResize, false);
+      }
+    }
+
+    /* ========= Menu Toggles ========= */
     const startButton = document.getElementById('startButton');
     const startMenu = document.getElementById('startMenu');
     startButton.addEventListener('click', (e) => {
@@ -583,7 +722,7 @@
       }
     });
 
-    /***** User Profile Update via postMessage *****/
+    /* ========= User Profile Update via postMessage ========= */
     window.addEventListener('message', (event) => {
       if (event.data && event.data.type === 'updateUser') {
         document.getElementById('userName').textContent = event.data.name || 'User Name';
@@ -591,9 +730,8 @@
       }
     });
 
-    /***** Unified Desktop Icons Data Outlay *****/
+    /* ========= Desktop Icons Data ========= */
     const desktopIconsData = [
-      // Each object represents an app or game on the main screen.
       { name: 'Apps', url: 'apps.html', icon: 'https://via.placeholder.com/40?text=A' },
       { name: 'Games', url: 'games.html', icon: 'https://via.placeholder.com/40?text=G' },
       { name: 'Terminal', url: 'terminal.html', icon: 'https://via.placeholder.com/40?text=T' },
@@ -603,7 +741,6 @@
       { name: 'Browser', url: 'browser.html', icon: 'https://via.placeholder.com/40?text=Br' },
       { name: 'User Profile', url: 'userprofile.html', icon: 'https://via.placeholder.com/40?text=U' }
     ];
-
     const desktopIconsContainer = document.getElementById('desktopIcons');
     desktopIconsData.forEach(item => {
       const iconDiv = document.createElement('div');
@@ -614,6 +751,16 @@
       });
       desktopIconsContainer.appendChild(iconDiv);
     });
+
+    /* ========= Wallpaper Change Function ========= */
+    function changeWallpaper() {
+      const url = document.getElementById('qsWallpaper').value;
+      if(url) {
+        document.querySelector('.desktop').style.backgroundImage = `url('${url}')`;
+      } else {
+        alert("Please enter a valid URL.");
+      }
+    }
   </script>
 </body>
 </html>
