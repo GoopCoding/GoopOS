@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HexixOS – Windows/puter‑Style Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Using Segoe UI for a modern Windows feel -->
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Custom cursor – replace 'custom-cursor.png' with your own cursor image */
+    body {
+      cursor: url('custom-cursor.png'), auto;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+
+    /***** Loading Screen *****/
+    #loadingScreen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+    #loadingScreen .logo {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 20px;
+    }
+    #loadingScreen .progress {
+      width: 300px;
+      height: 10px;
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    #loadingScreen .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #0078d7;
+      animation: loading 3s ease-out forwards;
+    }
+    @keyframes loading {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+
+    /***** Desktop Background *****/
+    .desktop {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: url('https://wallpaperaccess.com/full/317501.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    /***** Unified Desktop Icons Container *****/
+    .desktop-icons {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 10px;
+      width: calc(100% - 20px);
+      padding: 10px;
+      /* Optional: add a subtle background if desired */
+      /* background: rgba(0,0,0,0.2); */
+    }
+    .desktop-icons .icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .desktop-icons .icon:hover {
+      transform: scale(1.1);
+    }
+    .desktop-icons .icon img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+    .desktop-icons .icon span {
+      font-size: 10px;
+      color: #fff;
+      text-shadow: 0 0 3px #000;
+      text-align: center;
+    }
+
+    /***** Taskbar (Navigation Bar) *****/
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+    }
+    .taskbar-left, .taskbar-center, .taskbar-right {
+      display: flex;
+      align-items: center;
+    }
+    .taskbar-left { gap: 10px; }
+    .start-button, .nav-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .start-button:hover, .nav-item:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .start-button svg, .nav-item svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 6px;
+    }
+    .start-button span, .nav-item span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .taskbar-center { flex: 1; justify-content: center; }
+    .clock {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .taskbar-right { gap: 10px; }
+    .system-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .system-icon:hover {
+      transform: scale(1.1);
+    }
+
+    /***** Start Menu *****/
+    .start-menu {
+      position: absolute;
+      bottom: 58px;
+      left: 10px;
+      width: 320px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      display: none;
+      flex-direction: column;
+      padding: 12px;
+    }
+    .start-menu.active {
+      display: flex;
+    }
+    .start-menu .user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .start-menu .user-info img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 12px;
+      object-fit: cover;
+    }
+    .start-menu .user-info .name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .app-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    .app-tile:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transform: scale(1.05);
+    }
+    .app-tile img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 6px;
+      object-fit: contain;
+    }
+    .app-tile span {
+      font-size: 10px;
+      text-align: center;
+      color: #333;
+    }
+
+    /***** Quick Settings Panel *****/
+    .quick-settings {
+      position: absolute;
+      bottom: 58px;
+      right: 10px;
+      width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      display: none;
+      flex-direction: column;
+      padding: 12px;
+    }
+    .quick-settings.active {
+      display: flex;
+    }
+    .quick-settings h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    .quick-settings label {
+      font-size: 12px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .quick-settings input[type="range"],
+    .quick-settings select {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    /***** Window (Simulated App Windows) *****/
+    .window {
+      position: absolute;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .window .titlebar {
+      background: #0078d7;
+      color: #fff;
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+    }
+    .window .titlebar .title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .window .titlebar .window-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .window .titlebar .window-controls span {
+      width: 16px;
+      height: 16px;
+      text-align: center;
+      line-height: 16px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .window .titlebar .window-controls span:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .window .content {
+      padding: 0;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+    .window iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <div class="logo">
+      <!-- Replace with your own logo (SVG or image) -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="#000" stroke="#ff8c00" stroke-width="5"/>
+        <path d="M50,10 L55,40 L45,40 Z" fill="#ff0"/>
+        <circle cx="50" cy="50" r="20" fill="#b22222"/>
+        <rect x="48" y="60" width="4" height="20" fill="#fff"/>
+      </svg>
+    </div>
+    <div class="progress">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Desktop Environment -->
+  <div class="desktop">
+    <!-- Unified Desktop Icons (Apps & Games) -->
+    <div class="desktop-icons" id="desktopIcons">
+      <!-- Icons will be rendered dynamically from a data array -->
+    </div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="startMenu">
+      <div class="user-info">
+        <img src="https://via.placeholder.com/48?text=User" alt="User" id="userPfp">
+        <div class="name" id="userName">User Name</div>
+      </div>
+      <!-- Apps Section in the Start Menu -->
+      <div class="apps-grid" id="appsGrid">
+        <div class="app-tile" onclick="openWindow('Apps', 'apps.html')">
+          <img src="https://via.placeholder.com/40?text=A" alt="Apps Icon">
+          <span>Apps</span>
+        </div>
+        <div class="app-tile" onclick="openWindow('Games', 'games.html')">
+          <img src="https://via.placeholder.com/40?text=G" alt="Games Icon">
+          <span>Games</span>
+        </div>
+        <div class="app-tile" onclick="openWindow('Terminal', 'terminal.html')">
+          <img src="https://via.placeholder.com/40?text=T" alt="Terminal Icon">
+          <span>Terminal</span>
+        </div>
+        <div class="app-tile" onclick="openWindow('Settings', 'settings.html')">
+          <img src="https://via.placeholder.com/40?text=S" alt="Settings Icon">
+          <span>Settings</span>
+        </div>
+        <div class="app-tile" onclick="openWindow('Batch Editor', 'batch.html')">
+          <img src="https://via.placeholder.com/40?text=B" alt="Batch Editor Icon">
+          <span>Batch Editor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Settings Panel -->
+    <div class="quick-settings" id="quickSettings">
+      <h3>Quick Settings</h3>
+      <label for="qsTheme">Theme</label>
+      <select id="qsTheme">
+        <option value="default">Default</option>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+      <label for="qsVolume">Volume</label>
+      <input type="range" id="qsVolume" min="0" max="100" value="50">
+    </div>
+
+    <!-- Taskbar / Navigation Bar -->
+    <div class="taskbar">
+      <!-- Left Section -->
+      <div class="taskbar-left">
+        <div class="start-button" id="startButton">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#000" stroke="#ff8c00" stroke-width="5"/>
+            <path d="M50,10 L55,40 L45,40 Z" fill="#ff0"/>
+            <circle cx="50" cy="50" r="20" fill="#b22222"/>
+            <rect x="48" y="60" width="4" height="20" fill="#fff"/>
+          </svg>
+          <span>Start</span>
+        </div>
+        <div class="nav-item" onclick="openWindow('File Explorer', 'explorer.html')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path d="M10 4H4v16h16V8h-10zM4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/>
+          </svg>
+          <span>Explorer</span>
+        </div>
+        <div class="nav-item" onclick="openWindow('Browser', 'browser.html')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+          </svg>
+          <span>Browser</span>
+        </div>
+      </div>
+      <!-- Center Section: 12‑Hour Clock -->
+      <div class="taskbar-center">
+        <div class="clock" id="clock">12:00 PM</div>
+      </div>
+      <!-- Right Section -->
+      <div class="taskbar-right">
+        <img src="https://via.placeholder.com/24?text=N" alt="Notifications" class="system-icon" onclick="openWindow('Notifications', 'notifications.html')">
+        <img src="https://via.placeholder.com/24?text=Q" alt="Quick Settings" class="system-icon" id="quickSettingsBtn">
+        <img src="https://via.placeholder.com/24?text=P" alt="Profile" class="system-icon" onclick="openWindow('User Profile', 'userprofile.html')">
+      </div>
+    </div>
+  </div>
+
+  <!-- Container for Open Windows -->
+  <div id="windowContainer"></div>
+
+  <script>
+    /***** Hide the Loading Screen after 3 seconds *****/
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loadingScreen').style.display = 'none';
+      }, 3000);
+    });
+
+    /***** Clock: 12‑Hour Format with AM/PM *****/
+    function updateClock() {
+      const clockEl = document.getElementById('clock');
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // convert '0' to 12
+      clockEl.textContent = `${hours}:${minutes} ${ampm}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /***** Open Window Function *****/
+    function openWindow(title, url) {
+      const container = document.getElementById('windowContainer');
+      const win = document.createElement('div');
+      win.className = 'window';
+      // Random starting position for demo purposes
+      win.style.top = (50 + Math.random() * 200) + 'px';
+      win.style.left = (50 + Math.random() * 200) + 'px';
+      win.style.width = '500px';
+      win.style.height = '400px';
+      win.innerHTML = `
+        <div class="titlebar">
+          <div class="title">${title}</div>
+          <div class="window-controls">
+            <span onclick="closeWindow(this)">✕</span>
+          </div>
+        </div>
+        <div class="content">
+          <iframe src="${url}" title="${title}"></iframe>
+        </div>
+      `;
+      container.appendChild(win);
+      makeDraggable(win);
+      // Hide any open menus
+      document.getElementById('startMenu').classList.remove('active');
+      document.getElementById('quickSettings').classList.remove('active');
+    }
+    function closeWindow(el) {
+      const win = el.closest('.window');
+      win.parentNode.removeChild(win);
+    }
+
+    /***** Draggable Windows *****/
+    function makeDraggable(el) {
+      let isDragging = false, offsetX, offsetY;
+      const titlebar = el.querySelector('.titlebar');
+      titlebar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - el.getBoundingClientRect().left;
+        offsetY = e.clientY - el.getBoundingClientRect().top;
+        el.style.zIndex = Date.now();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          el.style.left = (e.clientX - offsetX) + 'px';
+          el.style.top = (e.clientY - offsetY) + 'px';
+        }
+      });
+      document.addEventListener('mouseup', () => isDragging = false);
+    }
+
+    /***** Menu Toggles *****/
+    const startButton = document.getElementById('startButton');
+    const startMenu = document.getElementById('startMenu');
+    startButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      startMenu.classList.toggle('active');
+      document.getElementById('quickSettings').classList.remove('active');
+    });
+    const quickSettingsBtn = document.getElementById('quickSettingsBtn');
+    const quickSettings = document.getElementById('quickSettings');
+    quickSettingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      quickSettings.classList.toggle('active');
+      startMenu.classList.remove('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!startButton.contains(e.target) && !startMenu.contains(e.target)) {
+        startMenu.classList.remove('active');
+      }
+      if (!quickSettingsBtn.contains(e.target) && !quickSettings.contains(e.target)) {
+        quickSettings.classList.remove('active');
+      }
+    });
+
+    /***** User Profile Update via postMessage *****/
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'updateUser') {
+        document.getElementById('userName').textContent = event.data.name || 'User Name';
+        document.getElementById('userPfp').src = event.data.pfp || 'https://via.placeholder.com/48?text=User';
+      }
+    });
+
+    /***** Unified Desktop Icons Data Outlay *****/
+    const desktopIconsData = [
+      // Each object represents an app or game on the main screen.
+      { name: 'Apps', url: 'apps.html', icon: 'https://via.placeholder.com/40?text=A' },
+      { name: 'Games', url: 'games.html', icon: 'https://via.placeholder.com/40?text=G' },
+      { name: 'Terminal', url: 'terminal.html', icon: 'https://via.placeholder.com/40?text=T' },
+      { name: 'Settings', url: 'settings.html', icon: 'https://via.placeholder.com/40?text=S' },
+      { name: 'Batch Editor', url: 'batch.html', icon: 'https://via.placeholder.com/40?text=B' },
+      { name: 'File Explorer', url: 'explorer.html', icon: 'https://via.placeholder.com/40?text=E' },
+      { name: 'Browser', url: 'browser.html', icon: 'https://via.placeholder.com/40?text=Br' },
+      { name: 'User Profile', url: 'userprofile.html', icon: 'https://via.placeholder.com/40?text=U' }
+    ];
+
+    const desktopIconsContainer = document.getElementById('desktopIcons');
+    desktopIconsData.forEach(item => {
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'icon';
+      iconDiv.innerHTML = `<img src="${item.icon}" alt="${item.name} Icon"><span>${item.name}</span>`;
+      iconDiv.addEventListener('dblclick', () => {
+        openWindow(item.name, item.url);
+      });
+      desktopIconsContainer.appendChild(iconDiv);
+    });
+  </script>
+</body>
+</html>
